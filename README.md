@@ -36,7 +36,7 @@ This project implements a complete autonomous manipulation pipeline for the **PA
 
 1. **Mapping** — the robot explores the kitchen environment with a Hokuyo LiDAR, building a probabilistic occupancy grid that is convolved into a configuration-space (C-space) map and saved to disk.
 
-   ![Occupancy Map](docs/cspace_map.png)
+   ![Occupancy Map](docs/occupancy_map.png)
 2. **Navigation** — A\* pathfinding on the saved C-space, with line-of-sight path simplification, feeds a proportional wheel controller.
 3. **Manipulation** — `ikpy` solves the 7-DOF arm inverse kinematics; gripper force feedback verifies successful grasps.
 4. **Behaviour Tree** — `py_trees` orchestrates the full mission: init → map → return home → handle jar × 3.

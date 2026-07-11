@@ -69,9 +69,11 @@ controllers/
 │   ├── pathfinding.py            ← A* search + line-of-sight simplification
 │   └── trajectory.py             ← TrajectoryMixin: waypoint following P-controller
 │
-└── map_save/                     ← Persisted maps (auto-generated)
-    ├── cspace.npy                ← Boolean configuration-space grid (300×300)
-    └── cspace_array.npy          ← Raw occupancy float grid
+├── map_save/                     ← Persisted maps (auto-generated)
+│   ├── cspace.npy                ← Boolean configuration-space grid (300×300)
+│   └── cspace_array.npy          ← Raw occupancy float grid
+│
+└── Robot.urdf                    ← TIAGo robot URDF for IK chain construction
 ```
 
 ---
@@ -289,6 +291,14 @@ Key parameters are defined as constants at the top of each module:
 - Email: duyennhce200017@gmail.com
 - GitHub: [@DuyenNH2401](https://github.com/DuyenNH2401)
 
+### Inspiration
+
+This project was inspired by [Tiago-Robot-Controller](https://github.com/p-georgiadis/Tiago-Robot-Controller/tree/main) by p-georgiadis.
+
 ---
 
-*Copyright © 2026 DuyenNH2401. All Rights Reserved.*
+## License & Usage
+
+This project is protected under a **Custom Restricted License** — see the [LICENSE](LICENSE) file for full terms.
+
+**In short:** You may **view, fork, and study** this repository for **inspiration and learning purposes only**. You may **not** copy, reproduce, distribute, or use any portion of this code in your own projects — whether modified or unmodified — without explicit written permission from the author.

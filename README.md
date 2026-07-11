@@ -297,8 +297,6 @@ This project was inspired by [Tiago-Robot-Controller](https://github.com/p-georg
 
 ---
 
-## License & Usage
+## License
 
-This project is protected under a **Custom Restricted License** — see the [LICENSE](LICENSE) file for full terms.
-
-**In short:** You may **view, fork, and study** this repository for **inspiration and learning purposes only**. You may **not** copy, reproduce, distribute, or use any portion of this code in your own projects — whether modified or unmodified — without explicit written permission from the author.
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.

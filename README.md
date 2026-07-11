@@ -23,6 +23,7 @@
 
 | Mapping phase | Pick-and-place phase |
 |---|---|
+| ![Mapping](docs/kitchen_mapping.gif) | ![Grasp](docs/kitchen_grasp.gif) |
 | Robot drives around the kitchen counter while building a LiDAR occupancy map | Robot uses IK to grasp each jar and transport it to the target table |
 
 > The world file (`worlds/kitchen.wbt`) is included. Open it in Webots ≥ R2023b and press **Play**.

@@ -38,6 +38,8 @@ This project implements a complete autonomous manipulation pipeline for the **PA
 3. **Manipulation** — `ikpy` solves the 7-DOF arm inverse kinematics; gripper force feedback verifies successful grasps.
 4. **Behaviour Tree** — `py_trees` orchestrates the full mission: init → map → return home → handle jar × 3.
 
+![C-Space Map](docs/cspace_map.png)
+
 ---
 
 ## Architecture

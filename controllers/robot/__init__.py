@@ -12,6 +12,9 @@ from mapping.grid_map import MappingMixin
 from navigation.trajectory import TrajectoryMixin
 
 
-class TiagoFull(RobotBase, OdometryMixin, PerceptionMixin, MappingMixin, TrajectoryMixin):
+class TiagoFull(
+    RobotBase, OdometryMixin, PerceptionMixin, MappingMixin, TrajectoryMixin
+):
     """TIAGo robot — hardware, odometry, perception, mapping, navigation, and manipulation."""
+
     pass

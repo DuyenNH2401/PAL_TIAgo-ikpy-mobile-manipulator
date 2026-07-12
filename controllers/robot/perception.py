@@ -35,20 +35,24 @@ class PerceptionMixin:
         ranges = ranges[valid]
         angles = angles[valid]
 
-        X_lidar = np.array([
-            ranges * np.cos(angles),
-            ranges * np.sin(angles),
-            np.ones_like(ranges),
-        ])
+        X_lidar = np.array(
+            [
+                ranges * np.cos(angles),
+                ranges * np.sin(angles),
+                np.ones_like(ranges),
+            ]
+        )
 
         # Lidar offset from robot centre (0.23 m forward)
         r_X_l = np.array([[1, 0, 0.23], [0, 1, 0], [0, 0, 1]])
 
-        w_T_r = np.array([
-            [np.cos(self.alpha), -np.sin(self.alpha), self.xw],
-            [np.sin(self.alpha),  np.cos(self.alpha), self.yw],
-            [0,                   0,                  1      ],
-        ])
+        w_T_r = np.array(
+            [
+                [np.cos(self.alpha), -np.sin(self.alpha), self.xw],
+                [np.sin(self.alpha), np.cos(self.alpha), self.yw],
+                [0, 0, 1],
+            ]
+        )
 
         X_robot = r_X_l @ X_lidar
         X_world = w_T_r @ X_robot

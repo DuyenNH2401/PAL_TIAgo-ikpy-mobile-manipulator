@@ -6,7 +6,6 @@
 """Mapping BT nodes — MapExist, RunMapping, MoveTable."""
 
 import py_trees
-from pathlib import Path
 from mapping.mapping_utils import mapping_run, save_cspace, CSPACE_PATH
 
 
@@ -48,16 +47,16 @@ class MoveTable(py_trees.behaviour.Behaviour):
 
     def __init__(self, name, blackboard):
         super().__init__(name)
-        self.blackboard  = blackboard
-        self.index       = 1
+        self.blackboard = blackboard
+        self.index = 1
         self._initialised = False
 
     def initialise(self):
         if not self._initialised:
             robot = self.blackboard.read("robot")
             if robot is not None:
-                self.index       = 1
-                self.waypoints   = robot.waypoints
+                self.index = 1
+                self.waypoints = robot.waypoints
                 self._initialised = True
 
     def update(self):

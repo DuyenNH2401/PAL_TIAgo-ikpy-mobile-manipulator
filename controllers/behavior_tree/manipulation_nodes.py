@@ -9,7 +9,6 @@ import math
 import numpy as np
 import py_trees
 
-from robot.base import STARTING_POSITION, LIFT_POSITION, PLACE_POSITION, ANGLE_TOLERANCE
 
 
 def _camera_to_world(robot, cam_pos):
@@ -21,21 +20,25 @@ def _camera_to_world(robot, cam_pos):
     Output:
         list: [world_x, world_y, world_z] position in world frame (metres).
     """
-    gps_val      = robot.gps.getValues()
-    compass_val  = robot.compass.getValues()
-    robot_angle  = np.arctan2(compass_val[0], compass_val[1])
+    gps_val = robot.gps.getValues()
+    compass_val = robot.compass.getValues()
+    robot_angle = np.arctan2(compass_val[0], compass_val[1])
     cos_t, sin_t = np.cos(robot_angle), np.sin(robot_angle)
 
-    torso_h = robot.sensors["torso_lift_joint"].getValue() if "torso_lift_joint" in robot.sensors else 0.0
-    cam_h   = gps_val[2] + 0.891 + torso_h
+    torso_h = (
+        robot.sensors["torso_lift_joint"].getValue()
+        if "torso_lift_joint" in robot.sensors
+        else 0.0
+    )
+    cam_h = gps_val[2] + 0.891 + torso_h
     cam_fwd = 0.25
 
     world_x = gps_val[0] + cos_t * (cam_pos[0] + cam_fwd) + (-sin_t) * cam_pos[1]
-    world_y = gps_val[1] + sin_t * (cam_pos[0] + cam_fwd) +   cos_t  * cam_pos[1]
+    world_y = gps_val[1] + sin_t * (cam_pos[0] + cam_fwd) + cos_t * cam_pos[1]
 
-    ref_torso  = 0.2
-    z_correct  = -1.87 * (torso_h - ref_torso) if torso_h > ref_torso else 0.0
-    world_z    = cam_h + cam_pos[2] + z_correct
+    ref_torso = 0.2
+    z_correct = -1.87 * (torso_h - ref_torso) if torso_h > ref_torso else 0.0
+    world_z = cam_h + cam_pos[2] + z_correct
 
     return [world_x, world_y, world_z]
 
@@ -88,6 +91,7 @@ def _solve_ik(robot, target_pos, offset_x=0.0, offset_y=0.0):
             orientation_mode="Y",
         )
         from robot.base import PART_NAMES
+
         return {
             link.name: result[i]
             for i, link in enumerate(robot.ik_chain.links)
@@ -105,7 +109,7 @@ class CheckHardware(py_trees.behaviour.Behaviour):
     on the robot. Returns SUCCESS if all components are found, FAILURE otherwise.
     """
 
-    _REQUIRED_MOTORS  = ["torso_lift_joint", "arm_1_joint", "gripper_left_finger_joint"]
+    _REQUIRED_MOTORS = ["torso_lift_joint", "arm_1_joint", "gripper_left_finger_joint"]
     _REQUIRED_SENSORS = ["torso_lift_joint", "arm_1_joint", "gripper_left_finger_joint"]
 
     def __init__(self, name, blackboard):
@@ -144,14 +148,14 @@ class MoveToPosition(py_trees.behaviour.Behaviour):
 
     def __init__(self, name, blackboard, joint_targets, tolerance=0.02, timeout=10.0):
         super().__init__(name)
-        self.blackboard    = blackboard
+        self.blackboard = blackboard
         self.joint_targets = joint_targets
-        self.tolerance     = tolerance
-        self.timeout       = timeout
-        self._start_t      = None
-        self._prog_t       = None
-        self._last_errors  = {}
-        self._done         = False
+        self.tolerance = tolerance
+        self.timeout = timeout
+        self._start_t = None
+        self._prog_t = None
+        self._last_errors = {}
+        self._done = False
 
     def initialise(self):
         self._done = False
@@ -159,7 +163,7 @@ class MoveToPosition(py_trees.behaviour.Behaviour):
         if robot is None:
             return
         self._start_t = robot.robot.getTime()
-        self._prog_t  = self._start_t
+        self._prog_t = self._start_t
         self._last_errors = {}
         for joint, target in self.joint_targets.items():
             if joint in robot.motors:
@@ -181,13 +185,13 @@ class MoveToPosition(py_trees.behaviour.Behaviour):
             self._done = True
             return py_trees.common.Status.SUCCESS
 
-        all_done   = True
+        all_done = True
         progressed = False
         for joint, target in self.joint_targets.items():
             if joint not in robot.sensors:
                 continue
             current = robot.sensors[joint].getValue()
-            error   = abs(target - current)
+            error = abs(target - current)
             if joint in self._last_errors:
                 if abs(self._last_errors[joint] - error) > 0.005:
                     progressed = True
@@ -225,10 +229,10 @@ class ObjectRecognizer(py_trees.behaviour.Behaviour):
     def __init__(self, name, blackboard, z_offset=0.0, samples=5, timeout=3.0):
         super().__init__(name)
         self.blackboard = blackboard
-        self.z_offset   = z_offset
-        self.samples    = samples
-        self.timeout    = timeout
-        self._start_t   = None
+        self.z_offset = z_offset
+        self.samples = samples
+        self.timeout = timeout
+        self._start_t = None
 
     def initialise(self):
         self._start_t = None
@@ -263,7 +267,7 @@ class ObjectRecognizer(py_trees.behaviour.Behaviour):
 
         # Pick closest to robot
         rx, ry = robot.xw, robot.yw
-        positions.sort(key=lambda item: (item[0][0]-rx)**2 + (item[0][1]-ry)**2)
+        positions.sort(key=lambda item: (item[0][0] - rx) ** 2 + (item[0][1] - ry) ** 2)
         pos, model = positions[0]
 
         self.blackboard.write("target_position", pos)
@@ -280,24 +284,25 @@ class ComprehensiveScanner(py_trees.behaviour.Behaviour):
     or SUCCESS after all angles have been scanned.
     """
 
-    def __init__(self, name, blackboard, total_angles=8, angle_increment=45,
-                 rotation_speed=1.0):
+    def __init__(
+        self, name, blackboard, total_angles=8, angle_increment=45, rotation_speed=1.0
+    ):
         super().__init__(name)
-        self.blackboard     = blackboard
-        self.total_angles   = total_angles
+        self.blackboard = blackboard
+        self.total_angles = total_angles
         self.rotation_speed = rotation_speed
-        self.rot_duration   = abs(math.radians(angle_increment) / rotation_speed)
+        self.rot_duration = abs(math.radians(angle_increment) / rotation_speed)
 
-        self._angle_idx    = 0
-        self._start_t      = None
+        self._angle_idx = 0
+        self._start_t = None
         self._rot_complete = False
 
     def initialise(self):
         robot = self.blackboard.read("robot")
         if robot is None:
             return
-        self._angle_idx    = 0
-        self._start_t      = robot.robot.getTime()
+        self._angle_idx = 0
+        self._start_t = robot.robot.getTime()
         self._rot_complete = False
 
         robot.motors["torso_lift_joint"].setPosition(0.35)
@@ -309,15 +314,15 @@ class ComprehensiveScanner(py_trees.behaviour.Behaviour):
         if robot is None:
             return py_trees.common.Status.FAILURE
 
-        now     = robot.robot.getTime()
+        now = robot.robot.getTime()
         elapsed = now - self._start_t
 
         if self._rot_complete:
             if elapsed > self.rot_duration + 0.3:
                 if self._angle_idx >= self.total_angles - 1:
                     return py_trees.common.Status.SUCCESS
-                self._angle_idx   += 1
-                self._start_t      = now
+                self._angle_idx += 1
+                self._start_t = now
                 self._rot_complete = False
             else:
                 robot.set_wheel_velocity(0.0, 0.0)
@@ -328,8 +333,9 @@ class ComprehensiveScanner(py_trees.behaviour.Behaviour):
             self._rot_complete = True
 
             # Quick recognition attempt
-            rec = ObjectRecognizer(f"Scan@{self._angle_idx}", self.blackboard,
-                                   timeout=2.0)
+            rec = ObjectRecognizer(
+                f"Scan@{self._angle_idx}", self.blackboard, timeout=2.0
+            )
             rec.initialise()
             if rec.update() == py_trees.common.Status.SUCCESS:
                 return py_trees.common.Status.SUCCESS
@@ -355,31 +361,32 @@ class MoveArmIK(py_trees.behaviour.Behaviour):
 
     _PRE_GRASP = {
         "torso_lift_joint": 0.3,
-        "arm_1_joint":      0.7,
-        "arm_2_joint":      0.4,
-        "arm_3_joint":     -1.5,
-        "arm_4_joint":      1.7,
-        "arm_5_joint":     -1.5,
-        "arm_6_joint":      0.0,
-        "arm_7_joint":      0.0,
+        "arm_1_joint": 0.7,
+        "arm_2_joint": 0.4,
+        "arm_3_joint": -1.5,
+        "arm_4_joint": 1.7,
+        "arm_5_joint": -1.5,
+        "arm_6_joint": 0.0,
+        "arm_7_joint": 0.0,
     }
 
-    def __init__(self, name, blackboard, offset_x=0.0, offset_y=0.0,
-                 tolerance=0.015, timeout=5.0):
+    def __init__(
+        self, name, blackboard, offset_x=0.0, offset_y=0.0, tolerance=0.015, timeout=5.0
+    ):
         super().__init__(name)
-        self.blackboard  = blackboard
-        self.offset_x    = offset_x
-        self.offset_y    = offset_y
-        self.tolerance   = tolerance
-        self.timeout     = timeout
-        self._started    = False
-        self._done       = False
-        self._targets    = None
-        self._start_t    = None
+        self.blackboard = blackboard
+        self.offset_x = offset_x
+        self.offset_y = offset_y
+        self.tolerance = tolerance
+        self.timeout = timeout
+        self._started = False
+        self._done = False
+        self._targets = None
+        self._start_t = None
 
     def initialise(self):
         self._started = False
-        self._done    = False
+        self._done = False
         self._targets = None
         self._start_t = None
 
@@ -405,9 +412,9 @@ class MoveArmIK(py_trees.behaviour.Behaviour):
             robot.robot.step(robot.timestep * 5)
 
             ox, oy = _approach_offsets([robot.xw, robot.yw], target[:2])
-            self._targets = _solve_ik(robot, target,
-                                      ox + self.offset_x,
-                                      oy + self.offset_y)
+            self._targets = _solve_ik(
+                robot, target, ox + self.offset_x, oy + self.offset_y
+            )
             if not self._targets:
                 return py_trees.common.Status.FAILURE
 
@@ -440,14 +447,14 @@ class GraspController(py_trees.behaviour.Behaviour):
 
     def __init__(self, name, blackboard, force_threshold=-10.0):
         super().__init__(name)
-        self.blackboard      = blackboard
+        self.blackboard = blackboard
         self.force_threshold = force_threshold
-        self._state          = "APPROACHING"
-        self._grip_w         = 0.045
-        self._verify_t       = None
+        self._state = "APPROACHING"
+        self._grip_w = 0.045
+        self._verify_t = None
 
     def initialise(self):
-        self._state  = "APPROACHING"
+        self._state = "APPROACHING"
         self._grip_w = 0.045
         self._verify_t = None
         self.blackboard.write("grasp_success", False)
@@ -468,7 +475,7 @@ class GraspController(py_trees.behaviour.Behaviour):
             robot.motors["gripper_left_finger_joint"].setPosition(self._grip_w)
             robot.motors["gripper_right_finger_joint"].setPosition(self._grip_w)
             if abs(lf) >= ft and abs(rf) >= ft:
-                self._state    = "VERIFYING"
+                self._state = "VERIFYING"
                 self._verify_t = robot.robot.getTime()
 
         elif self._state == "VERIFYING":
@@ -502,14 +509,16 @@ class LiftAndVerify(py_trees.behaviour.Behaviour):
     indicating the object was dropped.
     """
 
-    def __init__(self, name, blackboard, lift_positions, timeout=2.0, force_threshold=-5.0):
+    def __init__(
+        self, name, blackboard, lift_positions, timeout=2.0, force_threshold=-5.0
+    ):
         super().__init__(name)
-        self.blackboard      = blackboard
-        self.lift_positions  = lift_positions
-        self.timeout         = timeout
+        self.blackboard = blackboard
+        self.lift_positions = lift_positions
+        self.timeout = timeout
         self.force_threshold = force_threshold
-        self._start_t        = None
-        self._started        = False
+        self._start_t = None
+        self._started = False
 
     def initialise(self):
         self._start_t = None
@@ -559,34 +568,38 @@ class BackupAfterGrasp(py_trees.behaviour.Behaviour):
 
     def __init__(self, name, blackboard, backup_distance=0.12, duration=3.0):
         super().__init__(name)
-        self.blackboard      = blackboard
+        self.blackboard = blackboard
         self.backup_distance = backup_distance
-        self.duration        = duration
-        self._start_t        = None
-        self._start_pos      = None
-        self._state          = "INIT"
+        self.duration = duration
+        self._start_t = None
+        self._start_pos = None
+        self._state = "INIT"
 
     def initialise(self):
         robot = self.blackboard.read("robot")
         if robot is None:
             return
-        self._start_t   = robot.robot.getTime()
+        self._start_t = robot.robot.getTime()
         self._start_pos = [robot.xw, robot.yw]
-        self._state     = "INIT"
+        self._state = "INIT"
 
     def update(self):
         robot = self.blackboard.read("robot")
         if robot is None:
             return py_trees.common.Status.FAILURE
 
-        now  = robot.robot.getTime()
-        dx   = robot.xw - self._start_pos[0]
-        dy   = robot.yw - self._start_pos[1]
+        now = robot.robot.getTime()
+        dx = robot.xw - self._start_pos[0]
+        dy = robot.yw - self._start_pos[1]
         dist = math.sqrt(dx**2 + dy**2)
 
         if self._state == "INIT":
             if now - self._start_t > 1.0:
-                torso_h = robot.sensors["torso_lift_joint"].getValue() if "torso_lift_joint" in robot.sensors else 0.3
+                torso_h = (
+                    robot.sensors["torso_lift_joint"].getValue()
+                    if "torso_lift_joint" in robot.sensors
+                    else 0.3
+                )
                 if torso_h < 0.25:
                     robot.motors["torso_lift_joint"].setPosition(0.30)
                     robot.set_wheel_velocity(0.0, 0.0)
@@ -614,18 +627,18 @@ class OpenGripper(py_trees.behaviour.Behaviour):
 
     def __init__(self, name, blackboard, open_position=0.045, timeout=2.0):
         super().__init__(name)
-        self.blackboard    = blackboard
+        self.blackboard = blackboard
         self.open_position = open_position
-        self.timeout       = timeout
-        self._start_t      = None
-        self._opened       = False
+        self.timeout = timeout
+        self._start_t = None
+        self._opened = False
 
     def initialise(self):
         robot = self.blackboard.read("robot")
         if robot is None:
             return
         self._start_t = robot.robot.getTime()
-        self._opened  = False
+        self._opened = False
         robot.motors["gripper_left_finger_joint"].setPosition(self.open_position)
         robot.motors["gripper_right_finger_joint"].setPosition(self.open_position)
 
@@ -640,9 +653,12 @@ class OpenGripper(py_trees.behaviour.Behaviour):
 
         lp = robot.sensors["gripper_left_finger_joint"].getValue()
         rp = robot.sensors["gripper_right_finger_joint"].getValue()
-        if abs(lp - self.open_position) < 0.005 and abs(rp - self.open_position) < 0.005:
+        if (
+            abs(lp - self.open_position) < 0.005
+            and abs(rp - self.open_position) < 0.005
+        ):
             if not self._opened:
-                self._opened  = True
+                self._opened = True
                 self._start_t = now - self.timeout + 0.5
         if self._opened and now - self._start_t > 0.5:
             return py_trees.common.Status.SUCCESS

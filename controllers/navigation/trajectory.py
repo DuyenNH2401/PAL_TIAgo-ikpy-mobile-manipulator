@@ -3,7 +3,6 @@
 # Email  : duyennhce200017@gmail.com
 # Project: TIAgoController
 
-import numpy as np
 import math
 
 
@@ -26,7 +25,7 @@ class TrajectoryMixin:
         rho, alpha = self._compute_error(waypoints[index])
 
         phil = -self.p_alpha * alpha + self.p_rho * rho
-        phir =  self.p_alpha * alpha + self.p_rho * rho
+        phir = self.p_alpha * alpha + self.p_rho * rho
         self.set_wheel_velocity(phil, phir)
 
         if rho < 0.3 and self.state == "forward":
@@ -59,7 +58,7 @@ class TrajectoryMixin:
         rho, alpha = self._compute_error(waypoints[index])
 
         phil = -self.p_alpha * alpha + self.p_rho * rho
-        phir =  self.p_alpha * alpha + self.p_rho * rho
+        phir = self.p_alpha * alpha + self.p_rho * rho
         self.set_wheel_velocity(phil, phir)
 
         reached = False
@@ -93,10 +92,15 @@ class TrajectoryMixin:
                 rho   (float): Euclidean distance to the target (metres).
                 alpha (float): Heading error to the target (radians, wrapped to ±π).
         """
-        dx  = point[0] - self.xw
-        dy  = point[1] - self.yw
+        dx = point[0] - self.xw
+        dy = point[1] - self.yw
+
         rho = math.sqrt(dx**2 + dy**2)
         alpha = math.atan2(dy, dx) - self.alpha
-        if alpha >  math.pi: alpha -= 2 * math.pi
-        if alpha < -math.pi: alpha += 2 * math.pi
+
+        if alpha > math.pi:
+            alpha -= 2 * math.pi
+        if alpha < -math.pi:
+            alpha += 2 * math.pi
+
         return rho, alpha

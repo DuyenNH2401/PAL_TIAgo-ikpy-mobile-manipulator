@@ -12,7 +12,7 @@ from pathlib import Path
 _MAP_DIR = Path(__file__).resolve().parent.parent / "map_save"
 _MAP_DIR.mkdir(parents=True, exist_ok=True)
 
-CSPACE_PATH       = _MAP_DIR / "cspace.npy"
+CSPACE_PATH = _MAP_DIR / "cspace.npy"
 CSPACE_ARRAY_PATH = _MAP_DIR / "cspace_array.npy"
 
 
@@ -33,7 +33,7 @@ def mapping_run(robot):
         prob = robot.map[x, y]
         if prob > 0.1:
             v = int(prob * 255)
-            color = v * 256 ** 2 + v * 256 + v
+            color = v * 256**2 + v * 256 + v
             robot.display.setColor(color)
             robot.display.drawPixel(x, y)
 
@@ -51,7 +51,7 @@ def save_cspace(robot):
         None (writes cspace.npy and cspace_array.npy to the map_save directory).
     """
     kernel = np.ones((21, 21))
-    cmap   = signal.convolve2d(robot.map, kernel, mode="same")
+    cmap = signal.convolve2d(robot.map, kernel, mode="same")
     cspace = cmap > 0.5
     np.save(CSPACE_PATH, cspace)
     np.save(CSPACE_ARRAY_PATH, robot.map)

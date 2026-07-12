@@ -16,8 +16,8 @@ class OdometryMixin:
         Output:
             None (updates self.xw, self.yw, self.alpha in place).
         """
-        self.xw    = self.gps.getValues()[0]
-        self.yw    = self.gps.getValues()[1]
+        self.xw = self.gps.getValues()[0]
+        self.yw = self.gps.getValues()[1]
         self.alpha = np.arctan2(
             self.compass.getValues()[0],
             self.compass.getValues()[1],

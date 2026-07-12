@@ -76,14 +76,14 @@ def astar(cspace, start_world, goal_world):
     """
     rows, cols = cspace.shape
     start_px = world_to_pixel(*start_world, rows, cols)
-    goal_px  = world_to_pixel(*goal_world,  rows, cols)
+    goal_px = world_to_pixel(*goal_world, rows, cols)
 
     start_xy = (start_px[0], start_px[1])
-    goal_xy  = (goal_px[0],  goal_px[1])
+    goal_xy = (goal_px[0], goal_px[1])
 
     if not (0 <= start_xy[0] < rows and 0 <= start_xy[1] < cols):
         return None
-    if not (0 <= goal_xy[0]  < rows and 0 <= goal_xy[1]  < cols):
+    if not (0 <= goal_xy[0] < rows and 0 <= goal_xy[1] < cols):
         return None
     if cspace[start_xy] or cspace[goal_xy]:
         return None
@@ -91,17 +91,22 @@ def astar(cspace, start_world, goal_world):
         return [start_world, goal_world]
 
     _NEIGHBOURS = [
-        (-1, -1, np.sqrt(2)), (-1, 0, 1.0), (-1, 1, np.sqrt(2)),
-        ( 0, -1, 1.0),                        ( 0, 1, 1.0),
-        ( 1, -1, np.sqrt(2)), ( 1, 0, 1.0), ( 1, 1, np.sqrt(2)),
+        (-1, -1, np.sqrt(2)),
+        (-1, 0, 1.0),
+        (-1, 1, np.sqrt(2)),
+        (0, -1, 1.0),
+        (0, 1, 1.0),
+        (1, -1, np.sqrt(2)),
+        (1, 0, 1.0),
+        (1, 1, np.sqrt(2)),
     ]
 
     def _h(xy):
-        return np.sqrt((xy[0] - goal_xy[0])**2 + (xy[1] - goal_xy[1])**2)
+        return np.sqrt((xy[0] - goal_xy[0]) ** 2 + (xy[1] - goal_xy[1]) ** 2)
 
-    heap     = [(0.0, start_xy)]
+    heap = [(0.0, start_xy)]
     came_from = {}
-    g_score  = {start_xy: 0.0}
+    g_score = {start_xy: 0.0}
 
     while heap:
         _, cur = heapq.heappop(heap)
@@ -123,7 +128,7 @@ def astar(cspace, start_world, goal_world):
             tent_g = g_score[cur] + cost
             if tent_g < g_score.get(nb, float("inf")):
                 came_from[nb] = cur
-                g_score[nb]   = tent_g
+                g_score[nb] = tent_g
                 heapq.heappush(heap, (tent_g + _h(nb), nb))
 
     return None
@@ -140,7 +145,7 @@ def simplify_path(path_px, cspace):
     """
     if len(path_px) <= 2:
         return path_px
-    kept   = [path_px[0]]
+    kept = [path_px[0]]
     anchor = 0
     for i in range(1, len(path_px) - 1):
         if not _line_of_sight(path_px[anchor], path_px[i + 1], cspace):
@@ -163,7 +168,8 @@ def _line_of_sight(p1, p2, cspace):
     x1, y1 = int(p1[0]), int(p1[1])
     x2, y2 = int(p2[0]), int(p2[1])
     rows, cols = cspace.shape
-    dx = abs(x2 - x1); dy = abs(y2 - y1)
+    dx = abs(x2 - x1)
+    dy = abs(y2 - y1)
     sx = 1 if x1 < x2 else -1
     sy = 1 if y1 < y2 else -1
     err = dx - dy
@@ -176,7 +182,9 @@ def _line_of_sight(p1, p2, cspace):
             break
         e2 = 2 * err
         if e2 > -dy:
-            err -= dy; x1 += sx
+            err -= dy
+            x1 += sx
         if e2 < dx:
-            err += dx; y1 += sy
+            err += dx
+            y1 += sy
     return True

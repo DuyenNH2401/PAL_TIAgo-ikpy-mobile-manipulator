@@ -2,9 +2,6 @@
 # Author : DuyenNH2401
 # Email  : duyennhce200017@gmail.com
 # Project: TIAgoController
-
-"""Odometry — GPS + compass fusion for robot pose estimation."""
-
 import numpy as np
 
 

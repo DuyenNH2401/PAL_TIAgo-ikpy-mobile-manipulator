@@ -3,8 +3,6 @@
 # Email  : duyennhce200017@gmail.com
 # Project: TIAgoController
 
-"""Trajectory following — waypoint-based navigation with forward/backward pass."""
-
 import numpy as np
 import math
 

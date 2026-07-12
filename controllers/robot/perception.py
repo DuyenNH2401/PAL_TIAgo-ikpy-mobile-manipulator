@@ -3,8 +3,6 @@
 # Email  : duyennhce200017@gmail.com
 # Project: TIAgoController
 
-"""Perception — LiDAR polar-to-Cartesian conversion in robot and world frames."""
-
 import numpy as np
 
 

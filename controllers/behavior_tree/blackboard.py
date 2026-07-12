@@ -3,9 +3,6 @@
 # Email  : duyennhce200017@gmail.com
 # Project: TIAgoController
 
-"""Shared blackboard — global state for behavior-tree nodes."""
-
-
 class Blackboard:
     """Simple key-value store shared across all BT nodes.
 

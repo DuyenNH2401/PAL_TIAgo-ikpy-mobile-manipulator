@@ -63,3 +63,5 @@ Thumbs.db
 # Temp
 tempCodeRunnerFile.py
 .ruff_cache/
+
+generate_bt_image.py

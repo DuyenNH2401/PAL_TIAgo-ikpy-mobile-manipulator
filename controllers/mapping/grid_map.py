@@ -3,7 +3,7 @@
 # Email  : duyennhce200017@gmail.com
 # Project: TIAgoController
 
-"""Grid mapping — world↔pixel transforms and probabilistic occupancy map."""
+"""Grid mapping — world ↔ pixel transforms and probabilistic occupancy map."""
 
 import numpy as np
 

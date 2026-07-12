@@ -5,14 +5,6 @@
 
 """
 TIAGo Robot Controller — Mapping + Pick-and-Place
-==================================================
-Entry point for the Webots controller.
-
-Behaviour-tree flow:
-    1. Initialization   — hardware check + safe arm position
-    2. Mapping Phase    — skip if cspace.npy exists, else map environment
-    3. Return Home      — drive back to (0,0) facing 0° after mapping
-    4. Handle Jar 1-3   — find → approach → grasp → transport → place
 """
 
 import py_trees
@@ -54,7 +46,7 @@ def create_behavior_tree(blackboard: Blackboard) -> py_trees.trees.BehaviourTree
     """
     root = Sequence(name="Root", memory=True)
 
-    # ── 1. Initialization ──────────────────────────────────────────────────
+    # 1. Initialization
     init_seq = Sequence(name="Initialization", memory=True)
     init_seq.add_children(
         [
@@ -63,7 +55,7 @@ def create_behavior_tree(blackboard: Blackboard) -> py_trees.trees.BehaviourTree
         ]
     )
 
-    # ── 2. Mapping Phase ───────────────────────────────────────────────────
+    # 2. Mapping Phase
     # Selector: if cspace.npy exists → skip; else run mapping in parallel
     mapping_selector = Selector(name="Mapping Phase", memory=False)
     mapping_selector.add_child(MapExist("Map already exists?"))
@@ -80,10 +72,10 @@ def create_behavior_tree(blackboard: Blackboard) -> py_trees.trees.BehaviourTree
     )
     mapping_selector.add_child(mapping_parallel)
 
-    # ── 3. Return Home ─────────────────────────────────────────────────────
+    # 3. Return Home
     return_home = ReturnHome("Return to Origin", blackboard)
 
-    # ── 4. Handle Jars ─────────────────────────────────────────────────────
+    # 4. Handle Jars
     root.add_children([init_seq, mapping_selector, return_home])
 
     for i in range(3):
@@ -139,13 +131,7 @@ def create_behavior_tree(blackboard: Blackboard) -> py_trees.trees.BehaviourTree
 
 
 def main():
-    """Entry point: initialise robot, build the behaviour tree, and run the main loop.
-
-    Input:
-        None.
-    Output:
-        None (runs until the mission succeeds, fails, or the simulation ends).
-    """
+    """Entry point: initialise robot, build the behaviour tree, and run the main loop."""
     robot = TiagoFull()
     blackboard = Blackboard()
     blackboard.write("robot", robot)

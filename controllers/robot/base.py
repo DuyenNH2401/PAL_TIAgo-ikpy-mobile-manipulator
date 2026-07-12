@@ -7,11 +7,11 @@
 
 import math
 import warnings
+
 import numpy as np
+import urdf_parser_py.urdf as urdf_model
 from controller import Supervisor
 from ikpy.chain import Chain
-import urdf_parser_py.urdf as urdf_model
-
 
 MAX_MOTOR_SPEED = 6.0
 MIN_MOTOR_SPEED = 0.5
@@ -98,7 +98,7 @@ LIFT_POSITION = {
 PLACE_POSITION = {
     "torso_lift_joint": 0.15,
     "arm_1_joint": 1.6,
-    "arm_2_joint": 1.5,  # 1.02
+    "arm_2_joint": 1.02,
     "arm_3_joint": 0.0,
     "arm_4_joint": 1.2,
     "arm_5_joint": 0.5,
